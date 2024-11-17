@@ -1,0 +1,36 @@
+services:
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+  cms:
+    build:
+      context: ./cms
+      dockerfile: Dockerfile
+    ports:
+      - "1337:1337"
+    environment:
+      - PAYLOAD_CONFIG_PATH=./payload.config.js
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/payload
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/api
+  postgres:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=payload
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
